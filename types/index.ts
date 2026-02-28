@@ -7,6 +7,7 @@ export interface Post {
   published_at: Date | string
   updated_at: Date | string
   author: string
+  category: string
 }
 
 export interface Comment {
@@ -37,8 +38,21 @@ export interface CommentsListResponse {
   comments: Comment[]
 }
 
+export interface SinglePostResponse {
+  post: Post
+}
+
 export interface AuthResponse {
   token: string
+}
+
+export interface LoginRequest {
+  email: string
+  password: string
+}
+
+export interface LoginResponse {
+  user: AdminUser
 }
 
 export interface PostCreateInput {
@@ -47,6 +61,7 @@ export interface PostCreateInput {
   content: string
   excerpt: string
   author: string
+  category?: string
 }
 
 export interface PostUpdateInput {
@@ -55,4 +70,5 @@ export interface PostUpdateInput {
   content?: string
   excerpt?: string
   author?: string
+  category?: string
 }

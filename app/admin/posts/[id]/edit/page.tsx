@@ -26,14 +26,14 @@ export async function generateMetadata(
 
   if (!post) {
     return {
-      title: 'Post Not Found',
-      description: 'The requested post could not be found',
+      title: 'Artigo não encontrado',
+      description: 'O artigo solicitado não pôde ser encontrado',
     }
   }
 
   return {
-    title: `Edit "${post.title}" - Admin - DevBlog`,
-    description: `Edit the blog post: ${post.title}`,
+    title: `Editar "${post.title}" - Admin - PulseNews`,
+    description: `Editar o artigo: ${post.title}`,
     robots: {
       index: false,
       follow: false,
@@ -50,8 +50,20 @@ export default async function EditPostPage({ params }: PageProps) {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-8 text-gray-900">Edit Post</h1>
+    <div className="w-full max-w-4xl mx-auto px-4 md:px-6 py-12">
+      <div className="mb-8">
+        <a
+          href="/admin/posts"
+          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium mb-4 transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Voltar para artigos
+        </a>
+        <h1 className="text-4xl font-bold text-gray-900">Editar Artigo</h1>
+        <p className="text-gray-600 mt-2">Atualize os dados do artigo "{post.title}"</p>
+      </div>
       <AdminPostForm initialPost={post} />
     </div>
   )

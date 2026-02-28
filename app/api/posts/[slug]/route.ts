@@ -48,7 +48,7 @@ export async function PUT(
 
     const slug = (await params).slug
     const body = await request.json()
-    const { title, content, excerpt, author } = body
+    const { title, content, excerpt, author, category } = body
 
     const existingPost = await prisma.post.findUnique({
       where: { slug },
@@ -65,6 +65,7 @@ export async function PUT(
         ...(content && { content }),
         ...(excerpt && { excerpt }),
         ...(author && { author }),
+        ...(category && { category }),
       },
     })
 

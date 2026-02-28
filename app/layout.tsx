@@ -7,10 +7,10 @@ import Footer from '@/components/Footer'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'DevBlog',
-  description: 'A high-performance blog built with Next.js',
+  title: 'PulseNews - Fique por dentro do que importa',
+  description: 'As principais notícias sobre tecnologia, economia, saúde, ciência, esportes, cultura, política e meio ambiente.',
   icons: {
-    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75" fill="black">D</text></svg>',
+    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%232563EB" /><circle cx="50" cy="50" r="30" fill="white" /><circle cx="50" cy="50" r="20" fill="%232563EB" /></svg>',
   },
 }
 
@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body className={inter.className}>
         <div className="flex flex-col min-h-screen bg-white">
           <Header />

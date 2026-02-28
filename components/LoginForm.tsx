@@ -42,8 +42,7 @@ export default function LoginForm() {
         throw new Error(errorData.error || 'Failed to login')
       }
 
-      router.push('/admin/posts')
-      router.refresh()
+      window.location.href = '/admin/posts'
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
@@ -60,7 +59,7 @@ export default function LoginForm() {
       )}
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
+        <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
           Email
         </label>
         <input
@@ -69,16 +68,16 @@ export default function LoginForm() {
           name="email"
           value={formData.email}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
           required
           disabled={isLoading}
-          placeholder="admin@devblog.com"
+          placeholder="admin@pulsesnews.com"
         />
       </div>
 
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-2">
-          Password
+        <label htmlFor="password" className="block text-sm font-semibold text-gray-900 mb-2">
+          Senha
         </label>
         <input
           type="password"
@@ -86,25 +85,25 @@ export default function LoginForm() {
           name="password"
           value={formData.password}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
           required
           disabled={isLoading}
-          placeholder="admin123"
+          placeholder="Sua senha"
         />
       </div>
 
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 font-medium"
+        className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 font-semibold disabled:cursor-not-allowed"
       >
-        {isLoading ? 'Signing in...' : 'Sign In'}
+        {isLoading ? 'Conectando...' : 'Entrar'}
       </button>
 
-      <div className="text-xs text-gray-500 text-center">
-        <p>Demo credentials:</p>
-        <p>Email: admin@devblog.com</p>
-        <p>Password: admin123</p>
+      <div className="text-xs text-gray-500 text-center bg-gray-50 p-4 rounded-lg border border-gray-100">
+        <p className="font-medium text-gray-700 mb-2">Credenciais de demonstração:</p>
+        <p>Email: <span className="font-mono text-blue-600">admin@pulsesnews.com</span></p>
+        <p>Senha: <span className="font-mono text-blue-600">admin123</span></p>
       </div>
     </form>
   )

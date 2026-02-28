@@ -16,6 +16,7 @@ model Post {
   published_at DateTime  @default(now())
   updated_at   DateTime  @updatedAt
   author       String
+  category     String    @default("Geral")
   comments     Comment[]
 }
 

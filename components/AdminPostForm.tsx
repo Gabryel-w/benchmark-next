@@ -8,6 +8,17 @@ interface AdminPostFormProps {
   initialPost?: Post
 }
 
+const CATEGORIES = [
+  'Tecnologia',
+  'Economia',
+  'Saúde',
+  'Ciência',
+  'Esportes',
+  'Cultura',
+  'Política',
+  'Meio Ambiente',
+]
+
 export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
@@ -18,6 +29,7 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
     content: initialPost?.content || '',
     excerpt: initialPost?.excerpt || '',
     author: initialPost?.author || '',
+    category: initialPost?.category || 'Tecnologia',
   })
 
   useEffect(() => {
@@ -31,7 +43,7 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
   }, [formData.title, initialPost])
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -43,8 +55,8 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
     setIsLoading(true)
 
     try {
-      if (!formData.title || !formData.slug || !formData.content || !formData.excerpt || !formData.author) {
-        setError('All fields are required')
+      if (!formData.title || !formData.slug || !formData.content || !formData.excerpt || !formData.author || !formData.category) {
+        setError('Todos os campos são obrigatórios')
         setIsLoading(false)
         return
       }
@@ -64,44 +76,71 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to save post')
+        throw new Error(errorData.error || 'Falha ao salvar post')
       }
 
       router.push('/admin/posts')
       router.refresh()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
+      setError(err instanceof Error ? err.message : 'Um erro ocorreu')
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg border border-gray-200">
+    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-lg border border-gray-100">
       {error && (
-        <div className="bg-red-50 text-red-700 p-4 rounded-lg border border-red-200">
+        <div className="bg-red-50 text-red-700 p-4 rounded-lg border border-red-200 flex items-start gap-3">
+          <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+          </svg>
           {error}
         </div>
       )}
 
-      <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-900 mb-2">
-          Title
-        </label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-          disabled={isLoading}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="title" className="block text-sm font-semibold text-gray-900 mb-2">
+            Título
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+            required
+            disabled={isLoading}
+            placeholder="Digite o título do artigo"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="category" className="block text-sm font-semibold text-gray-900 mb-2">
+            Categoria
+          </label>
+          <select
+            id="category"
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+            required
+            disabled={isLoading}
+          >
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div>
-        <label htmlFor="slug" className="block text-sm font-medium text-gray-900 mb-2">
+        <label htmlFor="slug" className="block text-sm font-semibold text-gray-900 mb-2">
           Slug
         </label>
         <input
@@ -110,15 +149,17 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
           name="slug"
           value={formData.slug}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all font-mono text-sm"
           required
           disabled={isLoading}
+          placeholder="titulo-do-artigo"
         />
+        <p className="text-xs text-gray-500 mt-1">Gerado automaticamente a partir do título</p>
       </div>
 
       <div>
-        <label htmlFor="excerpt" className="block text-sm font-medium text-gray-900 mb-2">
-          Excerpt
+        <label htmlFor="excerpt" className="block text-sm font-semibold text-gray-900 mb-2">
+          Resumo
         </label>
         <input
           type="text"
@@ -126,16 +167,18 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
           name="excerpt"
           value={formData.excerpt}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
           maxLength={200}
           required
           disabled={isLoading}
+          placeholder="Resumo breve do artigo (até 200 caracteres)"
         />
+        <p className="text-xs text-gray-500 mt-1">{formData.excerpt.length}/200</p>
       </div>
 
       <div>
-        <label htmlFor="author" className="block text-sm font-medium text-gray-900 mb-2">
-          Author
+        <label htmlFor="author" className="block text-sm font-semibold text-gray-900 mb-2">
+          Autor
         </label>
         <input
           type="text"
@@ -143,43 +186,46 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
           name="author"
           value={formData.author}
           onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
           required
           disabled={isLoading}
+          placeholder="Nome do autor"
         />
       </div>
 
       <div>
-        <label htmlFor="content" className="block text-sm font-medium text-gray-900 mb-2">
-          Content (Markdown)
+        <label htmlFor="content" className="block text-sm font-semibold text-gray-900 mb-2">
+          Conteúdo (Markdown)
         </label>
         <textarea
           id="content"
           name="content"
           value={formData.content}
           onChange={handleChange}
-          rows={12}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+          rows={16}
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all font-mono text-sm"
           required
           disabled={isLoading}
+          placeholder="Escreva o conteúdo em Markdown..."
         />
+        <p className="text-xs text-gray-500 mt-1">{formData.content.split(/\s+/).length} palavras</p>
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex gap-4 pt-4 border-t border-gray-200">
         <button
           type="submit"
           disabled={isLoading}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-medium"
         >
-          {isLoading ? 'Saving...' : initialPost ? 'Update Post' : 'Create Post'}
+          {isLoading ? 'Salvando...' : initialPost ? 'Atualizar Artigo' : 'Criar Artigo'}
         </button>
         <button
           type="button"
           onClick={() => router.back()}
           disabled={isLoading}
-          className="px-6 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 transition-colors disabled:bg-gray-400"
+          className="px-6 py-3 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors disabled:bg-gray-200 disabled:cursor-not-allowed font-medium"
         >
-          Cancel
+          Cancelar
         </button>
       </div>
     </form>

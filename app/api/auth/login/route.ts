@@ -47,6 +47,13 @@ export async function POST(request: NextRequest) {
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60,
     })
+    // Non-httpOnly flag cookie (readable by middleware in Edge Runtime)
+    response.cookies.set('auth-logged-in', '1', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60,
+    })
 
     return response
   } catch (error) {

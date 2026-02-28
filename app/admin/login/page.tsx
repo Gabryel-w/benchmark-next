@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import LoginForm from '@/components/LoginForm'
 
 export const metadata: Metadata = {
-  title: 'Admin Login - DevBlog',
-  description: 'Admin login page',
+  title: 'Painel Admin - PulseNews',
+  description: 'Página de login do painel administrativo',
   robots: {
     index: false,
     follow: false,
@@ -12,12 +12,19 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="w-full min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
+    <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-3xl font-bold text-center mb-8 text-gray-900">
-            Admin Login
-          </h1>
+        <div className="bg-white rounded-xl shadow-xl p-8 border border-gray-100">
+          <div className="mb-8 text-center">
+            <div className="inline-flex items-center gap-2 mb-4">
+              <span className="text-3xl font-bold text-gray-900">PulseNews</span>
+              <div className="w-2 h-2 bg-blue-600 rounded-full pulse-dot"></div>
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Painel Administrativo
+            </h1>
+            <p className="text-gray-600 text-sm mt-2">Faça login para gerenciar artigos</p>
+          </div>
           <LoginForm />
         </div>
       </div>
