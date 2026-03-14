@@ -11,7 +11,7 @@
 
 Portal de noticias e artigos construido com **Next.js 14 (App Router)**, parte de um trabalho de conclusao de curso (TCC) que compara o desempenho entre **Next.js** e **Nuxt** em aplicacoes web equivalentes.
 
-> Este repositorio contem a implementacao Next.js. A versao Nuxt esta disponivel em [`benchmark-nuxt`](../benchmark-nuxt/).
+> Este repositorio contem a implementacao Next.js. A versao Nuxt esta disponivel em [`benchmark-nuxt`](https://github.com/Gabryel-w/benchmark-nuxt).
 
 ---
 
