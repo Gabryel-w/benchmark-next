@@ -1,42 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyToken } from '@/lib/auth'
+import { fetchRssPosts, mergeAndPaginate } from '@/lib/rss'
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10))
     const perPage = Math.max(1, parseInt(searchParams.get('perPage') || '10', 10))
-    const q = searchParams.get('q')
-    const category = searchParams.get('category')
+    const q = searchParams.get('q') || undefined
+    const category = searchParams.get('category') || undefined
 
-    // Build where clause for search and category filtering
-    const where: any = {}
-
-    if (q) {
-      // Search in title, excerpt, content, and author (case-insensitive)
-      where.OR = [
-        { title: { contains: q, mode: 'insensitive' } },
-        { excerpt: { contains: q, mode: 'insensitive' } },
-        { content: { contains: q, mode: 'insensitive' } },
-        { author: { contains: q, mode: 'insensitive' } },
-      ]
-    }
-
-    if (category) {
-      // Filter by exact category match
-      where.category = category
-    }
-
-    const [posts, total] = await Promise.all([
-      prisma.post.findMany({
-        where,
-        orderBy: { published_at: 'desc' },
-        skip: (page - 1) * perPage,
-        take: perPage,
-      }),
-      prisma.post.count({ where }),
+    const [rssPosts, dbPosts] = await Promise.all([
+      fetchRssPosts(),
+      prisma.post.findMany({ orderBy: { published_at: 'desc' } }),
     ])
+
+    const { posts, total } = mergeAndPaginate(rssPosts, dbPosts, {
+      page, perPage, q, category,
+    })
 
     return NextResponse.json({ posts, total })
   } catch (error) {

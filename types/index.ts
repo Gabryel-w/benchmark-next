@@ -8,6 +8,9 @@ export interface Post {
   updated_at: Date | string
   author: string
   category: string
+  source?: 'rss' | 'db'
+  link?: string
+  image?: string
 }
 
 export interface Comment {
@@ -52,7 +55,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  user: AdminUser
+  token: string
 }
 
 export interface PostCreateInput {

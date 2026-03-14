@@ -68,10 +68,10 @@ export default function LoginForm() {
           name="email"
           value={formData.email}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
           required
           disabled={isLoading}
-          placeholder="admin@pulsesnews.com"
+          placeholder="admin@devblog.com"
         />
       </div>
 
@@ -85,7 +85,7 @@ export default function LoginForm() {
           name="password"
           value={formData.password}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
           required
           disabled={isLoading}
           placeholder="Sua senha"
@@ -95,16 +95,11 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 font-semibold disabled:cursor-not-allowed"
+        className="w-full px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-gray-400 font-semibold disabled:cursor-not-allowed"
       >
         {isLoading ? 'Conectando...' : 'Entrar'}
       </button>
 
-      <div className="text-xs text-gray-500 text-center bg-gray-50 p-4 rounded-lg border border-gray-100">
-        <p className="font-medium text-gray-700 mb-2">Credenciais de demonstração:</p>
-        <p>Email: <span className="font-mono text-blue-600">admin@pulsesnews.com</span></p>
-        <p>Senha: <span className="font-mono text-blue-600">admin123</span></p>
-      </div>
     </form>
   )
 }

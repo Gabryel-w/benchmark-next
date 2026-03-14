@@ -47,7 +47,7 @@ export default function Header() {
   }, [])
 
   return (
-    <header className="w-full bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm">
+    <header className="w-full bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200/60">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
         <nav className="flex items-center justify-between">
           {/* Logo */}
@@ -55,17 +55,14 @@ export default function Header() {
             href="/"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-gray-900">PulseNews</span>
-              <div className="w-2 h-2 bg-blue-600 rounded-full pulse-dot"></div>
-            </div>
+            <span className="text-2xl font-bold tracking-tight text-gray-900">DevBlog<span className="text-indigo-600">.</span></span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex gap-8 items-center">
             <Link
               href="/"
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+              className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
             >
               Início
             </Link>
@@ -75,7 +72,7 @@ export default function Header() {
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors"
+                  className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors"
                   title="Menu do Admin"
                 >
                   A
@@ -106,7 +103,7 @@ export default function Header() {
             ) : (
               <Link
                 href="/admin/login"
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
               >
                 Entrar
               </Link>
@@ -130,10 +127,10 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pt-4 border-t border-gray-100 flex flex-col gap-4">
+          <div className="md:hidden mt-4 pt-4 border-t border-gray-200/60 flex flex-col gap-4 bg-white/80 backdrop-blur-md">
             <Link
               href="/"
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+              className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
               Início
@@ -143,7 +140,7 @@ export default function Header() {
               <>
                 <Link
                   href="/admin/posts"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                  className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Painel Admin
@@ -153,7 +150,7 @@ export default function Header() {
                     setMobileMenuOpen(false)
                     handleLogout()
                   }}
-                  className="text-left text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                  className="text-left text-gray-600 hover:text-gray-900 font-medium transition-colors"
                 >
                   Sair
                 </button>
@@ -161,7 +158,7 @@ export default function Header() {
             ) : (
               <Link
                 href="/admin/login"
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Entrar

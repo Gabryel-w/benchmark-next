@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
+import { fetchRssPosts, findRssPostBySlug } from '@/lib/rss'
 import PostContent from '@/components/PostContent'
 import CommentList from '@/components/CommentList'
+import BackButton from '@/components/BackButton'
 
 export const revalidate = 60
 
@@ -13,14 +14,14 @@ interface PageProps {
 
 const getCategoryColor = (category: string): { bg: string; text: string } => {
   const colors: Record<string, { bg: string; text: string }> = {
-    'Tecnologia': { bg: 'bg-blue-100', text: 'text-blue-700' },
-    'Economia': { bg: 'bg-green-100', text: 'text-green-700' },
-    'Saúde': { bg: 'bg-red-100', text: 'text-red-700' },
-    'Ciência': { bg: 'bg-purple-100', text: 'text-purple-700' },
-    'Esportes': { bg: 'bg-orange-100', text: 'text-orange-700' },
-    'Cultura': { bg: 'bg-pink-100', text: 'text-pink-700' },
-    'Política': { bg: 'bg-yellow-100', text: 'text-yellow-700' },
-    'Meio Ambiente': { bg: 'bg-emerald-100', text: 'text-emerald-700' },
+    'Tecnologia': { bg: 'bg-blue-50', text: 'text-blue-600' },
+    'Economia': { bg: 'bg-emerald-50', text: 'text-emerald-600' },
+    'Saúde': { bg: 'bg-rose-50', text: 'text-rose-600' },
+    'Ciência': { bg: 'bg-violet-50', text: 'text-violet-600' },
+    'Esportes': { bg: 'bg-amber-50', text: 'text-amber-600' },
+    'Cultura': { bg: 'bg-pink-50', text: 'text-pink-600' },
+    'Política': { bg: 'bg-sky-50', text: 'text-sky-600' },
+    'Meio Ambiente': { bg: 'bg-teal-50', text: 'text-teal-600' },
   }
   return colors[category] || { bg: 'bg-gray-100', text: 'text-gray-700' }
 }
@@ -41,10 +42,14 @@ const getAvatarColor = (name: string): string => {
 }
 
 async function getPost(slug: string) {
-  const post = await prisma.post.findUnique({
+  const dbPost = await prisma.post.findUnique({
     where: { slug },
   })
-  return post
+  if (dbPost) return { ...dbPost, source: 'db' as const }
+
+  await fetchRssPosts()
+  const rssPost = findRssPostBySlug(slug)
+  return rssPost || null
 }
 
 export async function generateMetadata(
@@ -61,7 +66,7 @@ export async function generateMetadata(
   }
 
   return {
-    title: `${post.title} - PulseNews`,
+    title: `${post.title} - DevBlog`,
     description: post.excerpt,
     openGraph: {
       title: post.title,
@@ -97,19 +102,22 @@ export default async function PostPage({ params }: PageProps) {
       {/* Article Header */}
       <article className="w-full max-w-4xl mx-auto px-4 md:px-6 py-8 md:py-12">
         {/* Navigation */}
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium mb-8 transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Voltar para início
-        </Link>
+        <BackButton />
+
+        {/* Cover Image */}
+        {post.image && (
+          <div className="mb-8 rounded-2xl overflow-hidden">
+            <img
+              src={post.image}
+              alt={post.title}
+              className="w-full h-64 md:h-96 object-cover"
+            />
+          </div>
+        )}
 
         {/* Category Badge */}
         <div className="mb-6">
-          <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${categoryColor.bg} ${categoryColor.text}`}>
+          <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${categoryColor.bg} ${categoryColor.text}`}>
             {post.category}
           </span>
         </div>
@@ -147,10 +155,8 @@ export default async function PostPage({ params }: PageProps) {
           <PostContent content={post.content} />
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-gray-200 my-12"></div>
-
         {/* Comments Section */}
+        <div className="border-t border-gray-200 my-12"></div>
         <section className="mt-12">
           <CommentList postSlug={slug} />
         </section>

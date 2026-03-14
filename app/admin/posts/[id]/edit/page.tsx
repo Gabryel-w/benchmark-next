@@ -32,7 +32,7 @@ export async function generateMetadata(
   }
 
   return {
-    title: `Editar "${post.title}" - Admin - PulseNews`,
+    title: `Editar "${post.title}" - Admin - DevBlog`,
     description: `Editar o artigo: ${post.title}`,
     robots: {
       index: false,
@@ -54,7 +54,7 @@ export default async function EditPostPage({ params }: PageProps) {
       <div className="mb-8">
         <a
           href="/admin/posts"
-          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium mb-4 transition-colors"
+          className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium mb-4 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />

@@ -110,7 +110,7 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
             required
             disabled={isLoading}
             placeholder="Digite o título do artigo"
@@ -126,7 +126,7 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
             name="category"
             value={formData.category}
             onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
             required
             disabled={isLoading}
           >
@@ -149,7 +149,7 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
           name="slug"
           value={formData.slug}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all font-mono text-sm"
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-mono text-sm"
           required
           disabled={isLoading}
           placeholder="titulo-do-artigo"
@@ -167,7 +167,7 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
           name="excerpt"
           value={formData.excerpt}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
           maxLength={200}
           required
           disabled={isLoading}
@@ -186,7 +186,7 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
           name="author"
           value={formData.author}
           onChange={handleChange}
-          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
           required
           disabled={isLoading}
           placeholder="Nome do autor"
@@ -203,7 +203,7 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
           value={formData.content}
           onChange={handleChange}
           rows={16}
-          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all font-mono text-sm"
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all font-mono text-sm"
           required
           disabled={isLoading}
           placeholder="Escreva o conteúdo em Markdown..."
@@ -215,7 +215,7 @@ export default function AdminPostForm({ initialPost }: AdminPostFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-medium"
+          className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-medium"
         >
           {isLoading ? 'Salvando...' : initialPost ? 'Atualizar Artigo' : 'Criar Artigo'}
         </button>

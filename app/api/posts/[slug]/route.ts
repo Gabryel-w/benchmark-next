@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyToken } from '@/lib/auth'
+import { fetchRssPosts, findRssPostBySlug } from '@/lib/rss'
 
 interface RouteParams {
   params: Promise<{ slug: string }>
@@ -18,10 +19,16 @@ export async function GET(
     })
 
     if (!post) {
-      return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+      // Try RSS cache, fetch if needed
+      await fetchRssPosts()
+      const rssPost = findRssPostBySlug(slug)
+      if (!rssPost) {
+        return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+      }
+      return NextResponse.json({ post: rssPost })
     }
 
-    return NextResponse.json({ post })
+    return NextResponse.json({ post: { ...post, source: 'db' } })
   } catch (error) {
     console.error('GET /api/posts/[slug] error:', error)
     return NextResponse.json(

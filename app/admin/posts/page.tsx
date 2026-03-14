@@ -4,8 +4,8 @@ import { prisma } from '@/lib/prisma'
 import AdminPostsList from '@/components/AdminPostsList'
 
 export const metadata: Metadata = {
-  title: 'Gerenciar Artigos - Admin - PulseNews',
-  description: 'Painel administrativo para gerenciar artigos do PulseNews',
+  title: 'Gerenciar Artigos - Admin - DevBlog',
+  description: 'Painel administrativo para gerenciar artigos do DevBlog',
   robots: {
     index: false,
     follow: false,
@@ -25,11 +25,14 @@ export default async function AdminPostsPage({ searchParams }: PageProps) {
 
   const [posts, totalCount] = await Promise.all([
     prisma.post.findMany({
+      where: { slug: { not: '__comment-pool__' } },
       orderBy: { published_at: 'desc' },
       skip: (currentPage - 1) * postsPerPage,
       take: postsPerPage,
     }),
-    prisma.post.count(),
+    prisma.post.count({
+      where: { slug: { not: '__comment-pool__' } },
+    }),
   ])
 
   const totalPages = Math.ceil(totalCount / postsPerPage)
@@ -43,7 +46,7 @@ export default async function AdminPostsPage({ searchParams }: PageProps) {
         </div>
         <Link
           href="/admin/posts/new"
-          className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          className="inline-flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

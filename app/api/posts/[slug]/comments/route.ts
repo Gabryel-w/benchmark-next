@@ -5,6 +5,16 @@ interface RouteParams {
   params: Promise<{ slug: string }>
 }
 
+function hashCode(str: string): number {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash
+  }
+  return Math.abs(hash)
+}
+
 export async function GET(
   request: NextRequest,
   { params }: RouteParams
@@ -12,20 +22,36 @@ export async function GET(
   try {
     const slug = (await params).slug
 
-    const post = await prisma.post.findUnique({
-      where: { slug },
+    // Fetch all pool comments
+    const allComments = await prisma.comment.findMany({
+      orderBy: { id: 'asc' },
     })
 
-    if (!post) {
-      return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+    if (allComments.length === 0) {
+      return NextResponse.json({ comments: [] })
     }
 
-    const comments = await prisma.comment.findMany({
-      where: { post_id: post.id },
-      orderBy: { created_at: 'desc' },
-    })
+    // Select 50 deterministic comments based on slug hash
+    const hash = hashCode(slug)
+    const count = Math.min(50, allComments.length)
+    const selected = []
+    const used = new Set<number>()
 
-    return NextResponse.json({ comments })
+    for (let i = 0; i < count; i++) {
+      let index = (hash + i * 7 + i * i) % allComments.length
+      while (used.has(index)) {
+        index = (index + 1) % allComments.length
+      }
+      used.add(index)
+      selected.push(allComments[index])
+    }
+
+    // Sort by created_at desc
+    selected.sort((a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    )
+
+    return NextResponse.json({ comments: selected })
   } catch (error) {
     console.error('GET /api/posts/[slug]/comments error:', error)
     return NextResponse.json(

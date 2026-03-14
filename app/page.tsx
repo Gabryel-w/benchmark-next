@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
+import { fetchRssPosts, mergeAndPaginate } from '@/lib/rss'
 import PostList from '@/components/PostList'
 import Pagination from '@/components/Pagination'
 import SearchBar from '@/components/SearchBar'
 
 export const metadata: Metadata = {
-  title: 'PulseNews - Fique por dentro do que importa',
+  title: 'DevBlog - Seu portal de notícias e artigos',
   description: 'Acompanhe as principais notícias sobre tecnologia, economia, saúde, ciência, esportes, cultura, política e meio ambiente.',
   openGraph: {
-    title: 'PulseNews',
+    title: 'DevBlog',
     description: 'Acompanhe as principais notícias sobre tecnologia, economia, saúde, ciência, esportes, cultura, política e meio ambiente.',
     type: 'website',
   },
@@ -27,33 +28,17 @@ export default async function Home({ searchParams }: PageProps) {
   const categoryQuery = params.category || ''
   const postsPerPage = 9
 
-  // Build where clause for search and category filtering
-  const where: any = {}
-
-  if (searchQuery) {
-    // Search in title, excerpt, content, and author (case-insensitive)
-    where.OR = [
-      { title: { contains: searchQuery, mode: 'insensitive' } },
-      { excerpt: { contains: searchQuery, mode: 'insensitive' } },
-      { content: { contains: searchQuery, mode: 'insensitive' } },
-      { author: { contains: searchQuery, mode: 'insensitive' } },
-    ]
-  }
-
-  if (categoryQuery) {
-    // Filter by exact category match
-    where.category = categoryQuery
-  }
-
-  const [posts, totalCount] = await Promise.all([
-    prisma.post.findMany({
-      where,
-      orderBy: { published_at: 'desc' },
-      skip: (currentPage - 1) * postsPerPage,
-      take: postsPerPage,
-    }),
-    prisma.post.count({ where }),
+  const [rssPosts, dbPosts] = await Promise.all([
+    fetchRssPosts(),
+    prisma.post.findMany({ orderBy: { published_at: 'desc' } }),
   ])
+
+  const { posts, total: totalCount } = mergeAndPaginate(rssPosts, dbPosts, {
+    page: currentPage,
+    perPage: postsPerPage,
+    q: searchQuery || undefined,
+    category: categoryQuery || undefined,
+  })
 
   const totalPages = Math.ceil(totalCount / postsPerPage)
 
@@ -61,16 +46,16 @@ export default async function Home({ searchParams }: PageProps) {
     <div className="w-full">
       {/* Hero Section */}
       {currentPage === 1 && !searchQuery && !categoryQuery && (
-        <div className="bg-gradient-to-br from-gray-50 to-white border-b border-gray-100 py-16 md:py-20">
+        <div className="bg-gray-50 border-b border-gray-100 py-20 md:py-28">
           <div className="max-w-7xl mx-auto px-4 md:px-6">
             <div className="max-w-3xl">
-              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4 leading-tight">
-                PulseNews
+              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-4 leading-tight">
+                DevBlog<span className="text-indigo-600">.</span>
               </h1>
-              <p className="text-xl md:text-2xl text-gray-600 mb-2 font-medium">
-                Fique por dentro do que importa
+              <p className="text-xl md:text-2xl text-gray-500 font-normal max-w-2xl mb-2">
+                Seu portal de notícias e artigos
               </p>
-              <p className="text-lg text-gray-500">
+              <p className="text-base text-gray-400">
                 As principais notícias sobre tecnologia, economia, saúde, ciência, esportes, cultura, política e meio ambiente, tudo em um só lugar.
               </p>
             </div>
@@ -85,15 +70,15 @@ export default async function Home({ searchParams }: PageProps) {
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-16">
         {/* Filter Info */}
         {(searchQuery || categoryQuery) && (
-          <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-blue-800">
+          <div className="mb-8 p-4 bg-indigo-50 border border-indigo-100 rounded-lg">
+            <p className="text-indigo-800">
               {searchQuery && categoryQuery ? (
                 <>
-                  Mostrando resultados para <strong>"{searchQuery}"</strong> na categoria <strong>{categoryQuery}</strong>
+                  Mostrando resultados para <strong>&quot;{searchQuery}&quot;</strong> na categoria <strong>{categoryQuery}</strong>
                 </>
               ) : searchQuery ? (
                 <>
-                  Mostrando resultados para <strong>"{searchQuery}"</strong>
+                  Mostrando resultados para <strong>&quot;{searchQuery}&quot;</strong>
                 </>
               ) : (
                 <>
@@ -112,7 +97,7 @@ export default async function Home({ searchParams }: PageProps) {
                 <Pagination
                   current={currentPage}
                   total={totalPages}
-                  perPage={postsPerPage}
+                  totalCount={totalCount}
                   searchQuery={searchQuery}
                   categoryQuery={categoryQuery}
                 />

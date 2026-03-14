@@ -71,11 +71,11 @@ button {
 }
 
 .prose blockquote {
-  @apply border-l-4 border-blue-600 pl-4 py-2 my-4 italic text-gray-600 bg-gray-50 rounded;
+  @apply border-l-4 border-indigo-500 pl-4 py-2 my-4 italic text-gray-600 bg-gray-50 rounded;
 }
 
 .prose a {
-  @apply text-blue-600 hover:text-blue-700 underline;
+  @apply text-indigo-600 hover:text-indigo-700 underline;
 }
 
 code {
@@ -88,20 +88,6 @@ pre {
 
 pre code {
   @apply bg-transparent p-0 text-gray-100;
-}
-
-/* Pulse animation for logo */
-@keyframes pulse-dot {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.4;
-  }
-}
-
-.pulse-dot {
-  animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* Line clamp utilities */

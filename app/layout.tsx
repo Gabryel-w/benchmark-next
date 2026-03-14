@@ -7,10 +7,10 @@ import Footer from '@/components/Footer'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'PulseNews - Fique por dentro do que importa',
+  title: 'DevBlog - Seu portal de notícias e artigos',
   description: 'As principais notícias sobre tecnologia, economia, saúde, ciência, esportes, cultura, política e meio ambiente.',
   icons: {
-    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%232563EB" /><circle cx="50" cy="50" r="30" fill="white" /><circle cx="50" cy="50" r="20" fill="%232563EB" /></svg>',
+    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%234F46E5" /><circle cx="50" cy="50" r="30" fill="white" /><circle cx="50" cy="50" r="20" fill="%234F46E5" /></svg>',
   },
 }
 

@@ -2,6 +2,10 @@ import { marked } from 'marked'
 
 export function parseMarkdown(content: string): string {
   try {
+    // If content already contains HTML tags, pass through as-is
+    if (/<[a-z][\s\S]*>/i.test(content)) {
+      return content
+    }
     return marked(content) as string
   } catch (error) {
     console.error('Error parsing markdown:', error)

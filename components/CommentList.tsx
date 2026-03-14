@@ -38,7 +38,7 @@ export default function CommentList({ postSlug }: CommentListProps) {
     return (
       <div className="text-gray-500 text-center py-12">
         <div className="inline-block">
-          <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin"></div>
         </div>
         <p className="mt-2">Carregando comentários...</p>
       </div>
