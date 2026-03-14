@@ -100,9 +100,10 @@ export async function fetchRssPosts(): Promise<Post[]> {
       if (!slug) continue
 
       // Extract image from enclosure or media:content
+      const mediaContent = (item as Record<string, unknown>).mediaContent as Record<string, Record<string, string>> | undefined
       const image =
         item.enclosure?.url ||
-        (item as Record<string, unknown>).mediaContent?.['$']?.url ||
+        mediaContent?.['$']?.url ||
         ''
 
       allPosts.push({
