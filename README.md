@@ -1,189 +1,244 @@
-# DevBlog - Next.js 14 Blog Application
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js" alt="Next.js 14" />
+  <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React 18" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Prisma-5-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" />
+  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+</p>
 
-A high-performance blog application built with Next.js 14, TypeScript, Tailwind CSS, and Prisma ORM. This application is designed for benchmarking Next.js performance against Nuxt.
+# DevBlog — Next.js 14
 
-## Features
+Portal de noticias e artigos construido com **Next.js 14 (App Router)**, parte de um trabalho de conclusao de curso (TCC) que compara o desempenho entre **Next.js** e **Nuxt** em aplicacoes web equivalentes.
 
-- Full-stack blog application with admin dashboard
-- Server-side rendering and static generation
-- JWT-based authentication for admin users
-- PostgreSQL database with Prisma ORM
-- Markdown support for blog posts
-- Comment system
-- Responsive design with Tailwind CSS
-- TypeScript for type safety
+> Este repositorio contem a implementacao Next.js. A versao Nuxt esta disponivel em [`benchmark-nuxt`](../benchmark-nuxt/).
 
-## Prerequisites
+---
+
+## Visao Geral
+
+O DevBlog e uma aplicacao full-stack de blog que consome noticias em tempo real via **RSS feeds** de portais brasileiros (G1, GE) e permite gerenciamento de conteudo proprio atraves de um painel administrativo protegido por autenticacao JWT.
+
+### Principais Funcionalidades
+
+- **Feed de noticias em tempo real** — Consome RSS de 8 categorias (Tecnologia, Economia, Saude, Ciencia, Esportes, Cultura, Politica, Meio Ambiente)
+- **Cache inteligente** — Cache em memoria com TTL de 5 minutos para os feeds RSS
+- **Merge RSS + Banco** — Posts do banco de dados tem prioridade sobre posts RSS com mesmo slug
+- **Sistema de comentarios** — 500 comentarios pre-gerados distribuidos deterministicamente (50 por post) usando algoritmo baseado em hash
+- **Painel administrativo** — CRUD completo de artigos com autenticacao JWT
+- **Busca e filtragem** — Pesquisa por titulo/autor/conteudo e filtro por categoria
+- **Paginacao numerada** — Navegacao por paginas com indicadores de pagina atual
+- **SEO otimizado** — Meta tags dinamicas com Open Graph para cada artigo
+- **Design responsivo** — Interface profissional com Tailwind CSS
+
+---
+
+## Tech Stack
+
+| Camada | Tecnologia |
+|--------|-----------|
+| Framework | Next.js 14 (App Router) |
+| Linguagem | TypeScript 5 |
+| UI | React 18 + Tailwind CSS 3 |
+| Banco de Dados | PostgreSQL + Prisma ORM 5 |
+| Autenticacao | JWT (jsonwebtoken) + bcryptjs |
+| RSS | rss-parser |
+| Markdown | marked |
+| Fonte | Inter (next/font) |
+
+---
+
+## Inicio Rapido
+
+### Pre-requisitos
 
 - Node.js 18+
-- PostgreSQL database
-- npm or yarn
+- PostgreSQL em execucao
+- npm
 
-## Getting Started
-
-### 1. Install Dependencies
+### 1. Instalar dependencias
 
 ```bash
 npm install
 ```
 
-### 2. Configure Environment Variables
-
-Copy the example environment file and update it with your database credentials:
+### 2. Configurar variaveis de ambiente
 
 ```bash
 cp .env.example .env.local
 ```
 
-Update `.env.local`:
-```
-DATABASE_URL="postgresql://user:password@localhost:5432/benchmark_blog"
-JWT_SECRET="your-secret-key-here"
-```
+Edite `.env.local`:
 
-### 3. Setup Database
-
-Generate Prisma client:
-```bash
-npm run postinstall
+```env
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/devblog_next"
+JWT_SECRET="sua-chave-secreta"
 ```
 
-Create and seed the database:
+### 3. Configurar banco de dados
+
 ```bash
 npx prisma migrate dev --name init
 npm run seed
 ```
 
-This will:
-- Create all database tables
-- Seed 50 blog posts with realistic content
-- Add 10 comments per post (500 total comments)
-- Create an admin user (email: `admin@devblog.com`, password: `admin123`)
+A seed cria:
+- 1 usuario administrador (`admin@devblog.com` / `admin123`)
+- 1 post oculto (pool de comentarios)
+- 500 comentarios distribuidos entre 40 autores ficticios
 
-### 4. Run Development Server
+### 4. Iniciar servidor de desenvolvimento
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Acesse [http://localhost:3000](http://localhost:3000)
 
-### 5. Access Admin Dashboard
+---
 
-1. Navigate to [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
-2. Login with:
-   - Email: `admin@devblog.com`
-   - Password: `admin123`
-
-## Project Structure
+## Estrutura do Projeto
 
 ```
 benchmark-next/
-├── app/                          # Next.js App Router
-│   ├── layout.tsx               # Root layout
-│   ├── page.tsx                 # Home page
-│   ├── posts/[slug]/            # Post detail pages
-│   ├── admin/                   # Admin dashboard
-│   └── api/                     # API routes
-├── components/                  # React components
-├── lib/                        # Utility functions
-├── prisma/                     # Database schema and seed
-├── types/                      # TypeScript type definitions
-├── middleware.ts               # Next.js middleware
-├── tailwind.config.ts          # Tailwind CSS config
-└── next.config.js             # Next.js configuration
+├── app/
+│   ├── layout.tsx                  # Layout raiz (Header + Footer)
+│   ├── page.tsx                    # Home — listagem de posts (SSG + ISR)
+│   ├── globals.css                 # Estilos globais + Tailwind
+│   ├── posts/
+│   │   └── [slug]/page.tsx         # Pagina do artigo (SSG + ISR)
+│   ├── admin/
+│   │   ├── login/page.tsx          # Login administrativo (SSR)
+│   │   └── posts/
+│   │       ├── page.tsx            # Listagem admin (SSR)
+│   │       ├── new/page.tsx        # Criar artigo (SSR)
+│   │       └── [id]/edit/page.tsx  # Editar artigo (SSR)
+│   └── api/
+│       ├── posts/route.ts          # GET (lista) + POST (criar)
+│       ├── posts/[slug]/route.ts   # GET + PUT + DELETE
+│       ├── posts/[slug]/comments/  # GET comentarios
+│       └── auth/                   # Login + Logout + Me
+├── components/
+│   ├── PostCard.tsx                # Card de preview com imagem
+│   ├── PostList.tsx                # Grid de cards
+│   ├── PostContent.tsx             # Renderizador de conteudo
+│   ├── CommentList.tsx             # Lista de comentarios
+│   ├── CommentItem.tsx             # Item de comentario
+│   ├── Header.tsx                  # Cabecalho com glass effect
+│   ├── Footer.tsx                  # Rodape
+│   ├── Pagination.tsx              # Paginacao numerada
+│   ├── SearchBar.tsx               # Barra de busca + filtro
+│   ├── BackButton.tsx              # Botao voltar (history.back)
+│   ├── AdminPostForm.tsx           # Formulario de artigo
+│   ├── AdminPostsList.tsx          # Tabela admin de artigos
+│   └── LoginForm.tsx               # Formulario de login
+├── lib/
+│   ├── rss.ts                      # Parser RSS + cache + merge
+│   ├── prisma.ts                   # Cliente Prisma
+│   ├── auth.ts                     # Utilitarios JWT
+│   └── markdown.ts                 # Parser Markdown/HTML
+├── prisma/
+│   ├── schema.prisma               # Schema do banco
+│   └── seed.ts                     # Seed de dados
+├── types/
+│   └── index.ts                    # Interfaces TypeScript
+├── middleware.ts                    # Protecao de rotas admin
+├── tailwind.config.ts              # Configuracao Tailwind
+└── next.config.js                  # Configuracao Next.js
 ```
 
-## API Routes
+---
 
-### Posts
-- `GET /api/posts` - List all published posts with pagination
-- `GET /api/posts/:slug` - Get a single post
-- `GET /api/posts/:slug/comments` - Get comments for a post
-- `POST /api/posts` - Create a new post (admin only)
-- `PUT /api/posts/:slug` - Update a post (admin only)
-- `DELETE /api/posts/:slug` - Delete a post (admin only)
+## Estrategias de Renderizacao
 
-### Authentication
-- `POST /api/auth/login` - Admin login
+| Pagina | Rota | Estrategia | Detalhes |
+|--------|------|-----------|----------|
+| Home | `/` | SSG + ISR | Revalida a cada 60s |
+| Artigo | `/posts/[slug]` | SSG + ISR | Revalida a cada 60s |
+| Comentarios | `/posts/[slug]#comments` | CSR | Fetch client-side |
+| Admin — Login | `/admin/login` | SSR | Sem cache |
+| Admin — Listagem | `/admin/posts` | SSR | `revalidate = 0` |
+| Admin — Criar | `/admin/posts/new` | SSR | Protegido por middleware |
+| Admin — Editar | `/admin/posts/[id]/edit` | SSR | Protegido por middleware |
 
-## Rendering Strategies
+---
 
-- **Home Page** (`/`): Static generation with revalidation every 60 seconds
-- **Post Detail** (`/posts/[slug]`): Static generation with incremental static regeneration
-- **Admin Pages** (`/admin/*`): Server-side rendering with authentication
-- **Comments Section**: Client-side rendering with fetch
+## Rotas de API
 
-## Authentication
+| Metodo | Rota | Descricao | Auth |
+|--------|------|-----------|------|
+| `GET` | `/api/posts` | Lista posts (RSS + DB) paginados | Nao |
+| `GET` | `/api/posts/:slug` | Post individual | Nao |
+| `GET` | `/api/posts/:slug/comments` | 50 comentarios deterministicos | Nao |
+| `POST` | `/api/posts` | Criar artigo | Sim |
+| `PUT` | `/api/posts/:slug` | Atualizar artigo | Sim |
+| `DELETE` | `/api/posts/:slug` | Excluir artigo | Sim |
+| `POST` | `/api/auth/login` | Login admin | Nao |
+| `GET` | `/api/auth/me` | Verificar sessao | Sim |
+| `POST` | `/api/auth/logout` | Encerrar sessao | Nao |
 
-- Admin authentication uses JWT (JSON Web Tokens)
-- Tokens are stored in httpOnly cookies for security
-- Middleware automatically protects `/admin/*` routes
-- Default admin credentials are provided for testing
+---
 
-## Performance Considerations
+## Sistema de Comentarios
 
-- Server Components for static content
-- Client Components only where necessary (forms, interactivity)
-- Image optimization with Next.js Image component
-- Font optimization with Next.js Font module
-- CSS-in-JS with Tailwind CSS for minimal runtime overhead
-- ISR for frequently accessed posts
-- Database query optimization with Prisma
+Os comentarios utilizam um sistema de **pool deterministico**:
 
-## Database Schema
+1. A seed cria 500 comentarios vinculados a um post oculto (`__comment-pool__`)
+2. Ao acessar qualquer post, o sistema seleciona 50 comentarios unicos baseado em um hash do slug
+3. O algoritmo `(hash + i * 7 + i * i) % total` garante que o mesmo post sempre exibe os mesmos comentarios
+4. O post pool e filtrado das listagens publicas e do painel admin
 
-### Posts
-- `id`: Unique identifier
-- `title`: Post title (max 100 characters)
-- `slug`: URL-friendly identifier (unique)
-- `content`: Post content in Markdown format
-- `excerpt`: Short description (max 200 characters)
-- `published_at`: Publication timestamp
-- `updated_at`: Last update timestamp
-- `author`: Author name
+---
 
-### Comments
-- `id`: Unique identifier
-- `post_id`: Reference to Post
-- `author_name`: Comment author
-- `content`: Comment text (max 500 characters)
-- `created_at`: Creation timestamp
+## RSS Feeds
 
-### AdminUsers
-- `id`: Unique identifier
-- `email`: Admin email (unique)
-- `password_hash`: Bcrypt hashed password
+| Categoria | Fonte |
+|-----------|-------|
+| Tecnologia | G1 Tecnologia |
+| Economia | G1 Economia |
+| Saude | G1 Saude |
+| Ciencia | G1 Ciencia e Saude |
+| Esportes | GE (Globo Esporte) |
+| Cultura | G1 Pop & Arte |
+| Politica | G1 Politica |
+| Meio Ambiente | G1 Natureza |
 
-## Building for Production
+---
+
+## Design System
+
+- **Cor principal**: Indigo 600 (`#4F46E5`)
+- **Header**: Glass effect (`bg-white/80 backdrop-blur-md`)
+- **Cards**: `rounded-2xl` com imagem de capa e gradiente fallback
+- **Footer**: `bg-gray-950` com acentos indigo
+- **Fonte**: Inter (Google Fonts via next/font)
+- **Responsivo**: Mobile-first com breakpoints `md:` e `lg:`
+
+---
+
+## Build de Producao
 
 ```bash
 npm run build
 npm run start
 ```
 
-## Development Tools
+---
 
-- **TypeScript**: For type safety
-- **Prisma Studio**: Inspect database visually
-  ```bash
-  npx prisma studio
-  ```
-- **Prisma Migrations**: Manage schema changes
-  ```bash
-  npx prisma migrate dev
-  ```
+## Contexto do Projeto
 
-## Notes for Benchmarking
+Este repositorio faz parte de um **Trabalho de Conclusao de Curso (TCC)** que realiza uma analise comparativa de desempenho entre Next.js 14 e Nuxt 3. Ambas as aplicacoes sao **funcionalmente e visualmente equivalentes**, permitindo uma comparacao justa de metricas como:
 
-This application is optimized for consistent performance measurement:
+- Tempo de carregamento inicial (FCP, LCP)
+- Time to Interactive (TTI)
+- Tamanho do bundle
+- Tempo de build
+- Performance em Core Web Vitals
 
-- Deterministic seed data (50 posts, 500 comments)
-- No external API dependencies
-- Local PostgreSQL database recommended
-- Production build recommended for accurate benchmarks
-- Use lighthouse or similar tools for performance metrics
+O contrato de equivalencia entre os dois repositorios esta documentado em [`equivalencia.md`](./equivalencia.md).
 
-## License
+---
+
+## Licenca
 
 MIT
