@@ -302,10 +302,6 @@ Lógica idêntica em ambas as apps:
 - [x] Schema Prisma idêntico
 - [x] Back button com `history.back()` em ambos
 
-### Infraestrutura
-- [ ] Ambas deployadas na Vercel
-- [ ] Ambas deployadas na Netlify
-- [ ] Configurações de plano equivalentes (Free tier)
 
 ---
 
